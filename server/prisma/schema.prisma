@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String
+  comments  Comment[]
+  upvotes   Upvote[]
+}
+
+model RoadmapItem {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  status      String
+  upvotes     Upvote[]
+  comments    Comment[]
+}
+
+model Comment {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  content      String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  author       User?     @relation(fields: [authorId], references: [id])
+  authorId     String?   @db.ObjectId
+  roadmapItem  RoadmapItem? @relation(fields: [roadmapItemId], references: [id])
+  roadmapItemId String?  @db.ObjectId
+
+  parent       Comment?  @relation("CommentToReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId     String?   @db.ObjectId
+  replies      Comment[] @relation("CommentToReplies")
+}
+
+model Upvote {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  user         User?     @relation(fields: [userId], references: [id])
+  userId       String?   @db.ObjectId
+  roadmapItem  RoadmapItem? @relation(fields: [roadmapItemId], references: [id])
+  roadmapItemId String?  @db.ObjectId
+}

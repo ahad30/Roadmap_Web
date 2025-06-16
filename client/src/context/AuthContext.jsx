@@ -14,9 +14,10 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
-  
+  console.log(user)
+
   const getToken = () => {
     return localStorage.getItem('token')
   };
@@ -91,7 +92,8 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post('/signin', credentials);
       
       if (response?.data?.success) {
-        setUser(response.data.user);
+        // console.log(response.data.user)
+        setUser(response?.data?.user);
         if (response?.data?.user &&  response?.data?.user?.token) {
           setToken(response?.data?.user?.token , response?.data?.user);
         }

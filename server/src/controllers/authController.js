@@ -99,8 +99,8 @@ const signin = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        message: 'Validation failed',
-        errors: errors.array()
+        message: errors.array().map(v=> v.msg),
+
       });
     }
 
@@ -130,7 +130,7 @@ const signin = async (req, res) => {
     // Generate token
     const token = generateToken(user.id);
     setTokenCookie(res, token );
-
+    console.log(user)
     res.json({
       success: true,
       message: 'Login successful',
@@ -194,6 +194,7 @@ const verifyToken = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
+        name: user.name
       }
     });
   } catch (error) {

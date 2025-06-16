@@ -4,6 +4,7 @@ import Register from "../Pages/Register/Register";
 import MainLayout from "../Layout/MainLayout";
 import ErrorPage from "../components/ErrorPage/ErrorPage";
 import Home from "../Pages/Home/Home";
+import ProtectedRoute from "./ProtectedRoute";
 
 
 export const routes = createBrowserRouter([
@@ -15,7 +16,7 @@ export const routes = createBrowserRouter([
       children:[
          {
         path: "/",
-        element: <Home />,
+        element: <ProtectedRoute><Home /></ProtectedRoute>,
       },
          {
         path: "/login",

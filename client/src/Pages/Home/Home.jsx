@@ -1,9 +1,18 @@
 import React from 'react'
+import RoadmapCard from '../../components/RoadmapCard';
 
 const Home = () => {
+
   return (
-    <div>Welcome to Roadmap App</div>
+    <>
+    
+   <RoadmapCard />
+    </>
+
   )
 }
 
 export default Home
+
+
+

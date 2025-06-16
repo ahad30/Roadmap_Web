@@ -6,8 +6,8 @@ import { toast } from 'sonner'
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'ahad@gmail.com',
+    password: '12345678',
   })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)

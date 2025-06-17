@@ -16,7 +16,6 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
-  console.log(user)
 
   const getToken = () => {
     return localStorage.getItem('token')

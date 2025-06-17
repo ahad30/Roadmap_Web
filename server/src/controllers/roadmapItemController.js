@@ -20,7 +20,8 @@ const getRoadmap = async (req, res) => {
 
 // Upvote roadmap item
 const upVoteItem =  async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.userId;
+  // console.log(userId)
   const roadmapItemId = req.params.id;
 
   const already = await prisma.upvote.findFirst({ where: { userId, roadmapItemId } });

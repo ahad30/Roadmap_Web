@@ -3,6 +3,7 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 
 export default function RoadmapCard() {
+  const { user } = useAuth();
   const token = localStorage.getItem("token");
   const [items, setItems] = useState([]);
 

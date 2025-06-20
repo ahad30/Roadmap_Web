@@ -14,7 +14,11 @@ async function getNestedComments(roadmapItemId) {
           replies: {
             include: {
               author: true,
-              replies: true,
+              replies: {
+                include: {
+                  author: true
+                }
+              }
             }
           }
         }
@@ -25,7 +29,8 @@ async function getNestedComments(roadmapItemId) {
   return comments;
 }
 
-// Add comment or reply
+
+// Add comment 
   const addComment = async (req, res) => {
   const { content, parentId } = req.body;
   const roadmapItemId = req.params.id;

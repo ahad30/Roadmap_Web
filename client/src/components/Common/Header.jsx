@@ -1,4 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
+
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -6,7 +8,9 @@ const Header = () => {
     <div className='bg-green-500 py-2 lg:py-3 text-white'>
       <div className='px-2 max-w-6xl mx-auto flex justify-between items-center'>
         <div>
-          <h1 className='text-base md:text-xl font-bold'>Roadmap Web App</h1>
+          <Link to={"/"}>
+            <h1 className='text-base md:text-xl font-bold'>Roadmap Web App</h1>
+          </Link>
         </div>
         <div className='flex gap-2 items-center'>
           {user ? (

@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { MessageSquare, ThumbsUp} from 'lucide-react';
 import api from "../api/api";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import CommentsSection from "./CommentsSection";
 export default function RoadmapCard() {
   const token = localStorage.getItem("token");
   const [items, setItems] = useState([]);
+  const navigate = useNavigate()
   // console.log(token)
 
   useEffect(() => {
@@ -44,10 +46,14 @@ const handleUpvote = async (id) => {
     }
   } catch (error) {
     const message =
-      error.response?.data?.error || "An error occurred while upvoting.";
+      error.response?.data?.error;
     toast.error(message);
   }
 };
+
+const handleItemDetails = (id) => {
+   navigate(`/roadmap/${id}`)
+}
 
 
   return (
@@ -108,8 +114,8 @@ const handleUpvote = async (id) => {
 
         </div>
 
-          <h4 className="mt-4 font-semibold">Comments</h4>
-          <CommentsSection roadmapItemId={item.id} />
+          {/* <h4 className="mt-4 font-semibold">Comments</h4>
+          <CommentsSection roadmapItemId={item.id} /> */}
       </div>
     </div>
   ))}

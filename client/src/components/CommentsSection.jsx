@@ -5,6 +5,7 @@ import CommentTree from "./CommentTree";
 
 export default function CommentsSection({ roadmapItemId }) {
   const [comments, setComments] = useState([]);
+  console.log(comments)
    
   const loadComments = () => {
     api.get(`/roadmap/${roadmapItemId}/comments` , { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } })
@@ -19,7 +20,7 @@ export default function CommentsSection({ roadmapItemId }) {
   return (
     <div className="mt-4">
       <AddCommentForm roadmapItemId={roadmapItemId} onCommentAdded={loadComments} />
-      <CommentTree comments={comments} roadmapItemId={roadmapItemId} />
+      <CommentTree comments={comments} roadmapItemId={roadmapItemId}  onCommentAdded={loadComments} />
     </div>
   );
 }

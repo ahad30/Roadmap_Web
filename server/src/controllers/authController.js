@@ -19,10 +19,7 @@ res.cookie('token', token, {
   secure: true,
   sameSite: 'None',
   path: '/',
-  maxAge: 30 * 60 * 1000,
-  domain: process.env.NODE_ENV === 'production'
-        ? ''
-        : '.localhost',
+  maxAge: 7 * 24 * 60 * 60 * 1000
 });
 
 };

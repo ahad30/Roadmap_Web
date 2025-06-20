@@ -39,12 +39,14 @@ export default function AddCommentForm({ roadmapItemId, onCommentAdded }) {
         onChange={e => setContent(e.target.value)}
         required
       />
-      <button
+      <div className='flex justify-end'>
+        <button
         type="submit"
         className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
       >
         Post Comment
       </button>
+      </div>
     </form>
   );
 }

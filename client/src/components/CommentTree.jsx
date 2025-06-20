@@ -1,53 +1,212 @@
-import React, { useState, useContext } from 'react';
-import api from '../api/api';
-import { useAuth } from '../context/AuthContext';
+import  { useState } from "react";
+import api from "../api/api";
+import { useAuth } from "../context/AuthContext";
+import { FaReply, FaEdit, FaTrash, FaThumbsUp, FaEllipsisH } from "react-icons/fa";
+import moment from "moment";
+import { toast } from "sonner";
 
-export default function CommentTree({ comments, roadmapItemId, level = 0 }) {
-    const token = localStorage.getItem('token')
-    const { user } = useAuth();
-    const userId = user?.id
+export default function CommentTree({
+  comments,
+  roadmapItemId,
+  level = 0,
+  onCommentAdded,
+}) {
+  const token = localStorage.getItem("token");
+  const { user } = useAuth();
+  const userId = user?.id;
+  const [activeReply, setActiveReply] = useState(null);
+  const [activeEdit, setActiveEdit] = useState(null);
   const [replyContent, setReplyContent] = useState("");
   const [editContent, setEditContent] = useState({});
+  const [showOptions, setShowOptions] = useState({});
+
+  const toggleOptions = (commentId) => {
+    setShowOptions(prev => ({ ...prev, [commentId]: !prev[commentId] }));
+  };
 
   const handleReply = async (parentId) => {
-    await api.post(`/roadmap/${roadmapItemId}/comment`, { content: replyContent, parentId }, { headers: { Authorization: `Bearer ${token}` } });
-    window.location.reload();
+    if (!replyContent.trim()) return toast.error('Fill the input first');
+    await api.post(
+      `/roadmap/${roadmapItemId}/comment`,
+      { content: replyContent, parentId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setReplyContent("");
+    setActiveReply(null);
+    onCommentAdded?.();
   };
 
   const handleEdit = async (commentId) => {
-    await api.put(`/comment/${commentId}`, { content: editContent[commentId] }, { headers: { Authorization: `Bearer ${token}` } });
-    window.location.reload();
+    if (!editContent[commentId]?.trim()) return;
+    await api.put(
+      `/comment/${commentId}`,
+      { content: editContent[commentId] },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setActiveEdit(null);
+    onCommentAdded?.();
   };
 
   const handleDelete = async (commentId) => {
-    await api.delete(`/comment/${commentId}`, { headers: { Authorization: `Bearer ${token}` } });
-    window.location.reload();
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      await api.delete(`/comment/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      onCommentAdded?.();
+    }
   };
 
+
   return (
-    <div className={`pl-${level * 4}`}>
-      {comments.map(comment => (
-        <div key={comment.id} className="border p-2 mb-1">
-          <p><b>{comment.author?.email}</b>: {comment.content}</p>
+    <div className={`space-y-3 ${level > 0 ? '-ml-10 lg:ml-2' : ''}`}>
+      {comments.map((comment) => (
+        <div key={comment.id} className="bg-white  p-3">
+          <div className="flex items-start">
+            <div className="flex-shrink-0 mr-3">
+              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm font-medium">
+                {comment.author?.name?.charAt(0).toUpperCase()}
+              </div>
+            </div>
+            
+            <div className="lg:flex-1">
+              <div className="bg-gray-100 rounded-2xl p-3">
+                <div className="flex items-center">
+                  <span className="font-semibold text-sm mr-2">{comment.author?.name}</span>            
+                </div>
+                
+                {activeEdit === comment.id ? (
+                  <div className="mt-2">
+                    <textarea
+                      autoFocus
+                      value={editContent[comment.id] || comment.content}
+                      onChange={(e) =>
+                        setEditContent({
+                          ...editContent,
+                          [comment.id]: e.target.value,
+                        })
+                      }
+                      className="w-full border rounded-lg p-2 text-sm"
+                      rows="2"
+                    />
+                    <div className="flex justify-end space-x-2 mt-2">
+                      <button
+                        onClick={() => setActiveEdit(null)}
+                        className="text-sm px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handleEdit(comment.id)}
+                        className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                      >
+                        Update
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm mt-1">{comment.content}</p>
+                )}
+              </div>
+              
+              <div className="flex items-center mt-1 text-xs text-gray-500 space-x-4 ml-2">
+               
+                {level < 3  && (
+                  <button 
+                    onClick={() => {
+                      setActiveReply(activeReply === comment.id ? null : comment.id);
+                      setActiveEdit(null);
+                    }}
+                    className="flex items-center hover:text-blue-500"
+                  >
+                    <FaReply className="mr-1" /> Reply
+                  </button>
+                )}
 
-          {userId === comment.authorId && (
-            <>
-              <input required placeholder="Edit comment..." onChange={e => setEditContent({...editContent, [comment.id]: e.target.value})} className="border p-1" />
-              <button onClick={() => handleEdit(comment.id)} className="ml-2 text-sm text-green-500">Update</button>
-              <button onClick={() => handleDelete(comment.id)} className="ml-2 text-sm text-red-500">Delete</button>
-            </>
-          )}
-
-          {level < 3 && (
-            <>
-              <input type='text' required placeholder="Reply..." onChange={e => setReplyContent(e.target.value)} className="border p-1" />
-              <button onClick={() => handleReply(comment.id)} className="ml-2 text-sm text-blue-500">Reply</button>
-            </>
-          )}
-
-          {comment.replies?.length > 0 &&
-            <CommentTree comments={comment.replies} roadmapItemId={roadmapItemId} level={level + 1} />
-          }
+                  <span className="text-gray-500 text-xs">
+                    {moment(comment.createdAt).fromNow()}
+                  </span>
+                
+              </div>
+              
+              {activeReply === comment.id && (
+                <div className="mt-3 flex">
+                  <div className="flex-shrink-0 mr-2">
+                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm font-medium">
+                      {user?.name?.charAt(0).toUpperCase()}
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <textarea
+                      autoFocus
+                      value={replyContent}
+                      onChange={(e) => setReplyContent(e.target.value)}
+                      placeholder="Write a reply..."
+                      className="w-full border rounded-lg p-2 text-sm"
+                      rows="2"
+                    />
+                    <div className="flex justify-end space-x-2 mt-2">
+                      <button
+                        onClick={() => setActiveReply(null)}
+                        className="text-sm px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handleReply(comment.id)}
+                        className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                      >
+                        Reply
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {comment.replies?.length > 0 && (
+                <CommentTree
+                  comments={comment.replies}
+                  roadmapItemId={roadmapItemId}
+                  level={level + 1}
+                  onCommentAdded={onCommentAdded}
+                />
+              )}
+            </div>
+            
+            {userId === comment.authorId && (
+              <div className="relative">
+                <button 
+                  onClick={() => toggleOptions(comment.id)}
+                  className="text-gray-400 hover:text-gray-600 p-1"
+                >
+                  <FaEllipsisH />
+                </button>
+                
+                {showOptions[comment.id] && (
+                  <div className="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg z-10 border">
+                    <button
+                      onClick={() => {
+                        setActiveEdit(comment.id);
+                        setEditContent(prev => ({ ...prev, [comment.id]: comment.content }));
+                        setShowOptions({});
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <FaEdit className="mr-2" /> Edit
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleDelete(comment.id);
+                        setShowOptions({});
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    >
+                      <FaTrash className="mr-2" /> Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       ))}
     </div>

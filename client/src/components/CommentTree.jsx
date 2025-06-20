@@ -53,6 +53,7 @@ export default function CommentTree({
         headers: { Authorization: `Bearer ${token}` },
       });
       onCommentAdded?.();
+      toast.success('Comment Deleted Successfully');
     }
   };
 

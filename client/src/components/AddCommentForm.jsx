@@ -1,6 +1,7 @@
 // src/components/AddCommentForm.jsx
 import { useState, useContext } from 'react';
 import api from '../api/api';
+import { toast } from 'sonner';
 
 
 export default function AddCommentForm({ roadmapItemId, onCommentAdded }) {
@@ -11,7 +12,7 @@ export default function AddCommentForm({ roadmapItemId, onCommentAdded }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (content.trim().length === 0) return;
+    if (content.trim().length === 0) return toast.error('Write something first');;
 
     try {
       await api.post(`/roadmap/${roadmapItemId}/comment`, {
@@ -33,11 +34,11 @@ export default function AddCommentForm({ roadmapItemId, onCommentAdded }) {
       <textarea
         className="w-full p-2 border rounded"
         placeholder="Write your comment..."
-        // maxLength={300}
+        maxLength={300}
         rows={3}
         value={content}
         onChange={e => setContent(e.target.value)}
-        required
+ 
       />
       <div className='flex justify-end'>
         <button

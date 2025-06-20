@@ -60,7 +60,7 @@ export default function CommentTree({
   return (
     <div className={`space-y-3 ${level > 0 ? '-ml-10 lg:ml-2' : ''}`}>
       {comments.map((comment) => (
-        <div key={comment.id} className="bg-white  p-3">
+        <div key={comment.id} className="bg-white p-3">
           <div className="flex items-start">
             <div className="flex-shrink-0 mr-3">
               <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm font-medium">
@@ -68,8 +68,8 @@ export default function CommentTree({
               </div>
             </div>
             
-            <div className="lg:flex-1">
-              <div className="bg-gray-100 rounded-2xl p-3">
+            <div className="lg:flex-1 w-[80%] md:w-full">
+              <div className="bg-gray-100 rounded-2xl p-3 break-words">
                 <div className="flex items-center">
                   <span className="font-semibold text-sm mr-2">{comment.author?.name}</span>            
                 </div>
@@ -104,7 +104,7 @@ export default function CommentTree({
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm mt-1">{comment.content}</p>
+                  <p className="text-sm mt-1 break-words">{comment?.content}</p>
                 )}
               </div>
               

@@ -5,7 +5,7 @@ import CommentTree from "./CommentTree";
 
 export default function CommentsSection({ roadmapItemId }) {
   const [comments, setComments] = useState([]);
-  console.log(comments)
+  // console.log(comments)
    
   const loadComments = () => {
     api.get(`/roadmap/${roadmapItemId}/comments` , { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } })

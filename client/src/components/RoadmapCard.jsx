@@ -83,7 +83,7 @@ const handleItemDetails = (id) => {
         </p>
         
         {/* Stats and actions */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-center gap-5 justify-between">
           <div className="flex items-center space-x-2">
             <div className="flex items-center text-gray-600">
               <ThumbsUp className="w-4 h-4 mr-1" />

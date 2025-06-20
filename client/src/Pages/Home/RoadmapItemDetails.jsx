@@ -11,7 +11,7 @@ const RoadmapItemDetails = () => {
   useEffect(() => {
     try {
       const res = api.get(`/roadmap/${id}`).then((res) => {
-        console.log(res)
+        // console.log(res)
         setItem(res?.data?.data);
       });
     } catch (error) {

@@ -18,6 +18,27 @@ const getRoadmap = async (req, res) => {
   });
 }
 
+
+const getRoadmapById = async (req, res) => {
+  const  id  = req.params.id;
+  const item = await prisma.roadmapItem.findUnique({
+    where: { id: id },
+    include: {
+      upvotes: true,
+      comments: {
+        include: { author: true, replies: true }
+      }
+    }
+  });
+  res.json({
+    data: item
+  });
+}
+
+
+
+
+
 // Upvote roadmap item
 const upVoteItem =  async (req, res) => {
   const userId = req.userId;
@@ -34,5 +55,6 @@ const upVoteItem =  async (req, res) => {
 
 module.exports = {
  getRoadmap,
+  getRoadmapById,
  upVoteItem
 };

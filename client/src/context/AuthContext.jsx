@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import { toast } from 'sonner';
+import api from '../api/api';
 const AuthContext = createContext();
-axios.defaults.baseURL = `${import.meta.env.VITE_BACKEND_URL}`;
-axios.defaults.withCredentials = true;
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -45,7 +43,7 @@ export const AuthProvider = ({ children }) => {
         return;
       }
  
-      const response = await axios.get('/verify', {
+      const response = await api.get('/verify', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -67,7 +65,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (userData) => {
     try {
       setLoading(true);
-      const response = await axios.post('/signup', userData);
+      const response = await api.post('/signup', userData);
       
       if (response.data.success) {
         setUser(response.data.user);      
@@ -88,7 +86,7 @@ export const AuthProvider = ({ children }) => {
   const signin = async (credentials) => {
     try {
       setLoading(true);
-      const response = await axios.post('/signin', credentials);
+      const response = await api.post('/signin', credentials);
       
       if (response?.data?.success) {
         // console.log(response.data.user)
@@ -110,7 +108,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('/logout');
+      await api.post('/logout');
       clearToken();
       setUser(null);
       toast.success('Logged out successfully!');

@@ -1,27 +1,31 @@
 import { useEffect, useState, useContext } from "react";
-import { MessageSquare, ThumbsUp, Clock, CheckCircle, Flag, TrendingUp } from 'lucide-react';
+import { MessageSquare, ThumbsUp} from 'lucide-react';
 import api from "../api/api";
 import { toast } from "sonner";
+import CommentsSection from "./CommentsSection";
 
 export default function RoadmapCard() {
   const token = localStorage.getItem("token");
   const [items, setItems] = useState([]);
-  console.log(items)
+  // console.log(token)
 
   useEffect(() => {
-    api.get("/roadmap")
-    .then((res) => 
+     try {
+      const res = api.get("/roadmap")
+     .then((res) => 
      {
       setItems(res.data.data)
      }
   );
+     } catch (error) {
+      console.log(error)
+     }
   }, []);
 
 const handleUpvote = async (id) => {
   try {
     const res = await api.post(
       `/roadmap/${id}/upvote`,
-      {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -85,14 +89,27 @@ const handleUpvote = async (id) => {
             </div>
           </div>
           
-          <button 
+         <div className="flex space-x-2">
+           <button 
             onClick={() => handleUpvote(item.id)}
             className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             <ThumbsUp className="-ml-0.5 mr-1.5 h-4 w-4" />
             Upvote
           </button>
+          <button 
+            onClick={() => handleItemDetails(item.id)}
+            className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <MessageSquare className="-ml-0.5 mr-1.5 h-4 w-4" />
+            Comment
+          </button>
+         </div>
+
         </div>
+
+          <h4 className="mt-4 font-semibold">Comments</h4>
+          <CommentsSection roadmapItemId={item.id} />
       </div>
     </div>
   ))}

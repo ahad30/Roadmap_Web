@@ -1,28 +1,14 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageSquare, ThumbsUp} from 'lucide-react';
-import api from "../api/api";
+import api from "../../api/api";
 import { toast } from "sonner";
-import CommentsSection from "./CommentsSection";
 
-export default function RoadmapCard() {
+export default function RoadmapCard({filterItems , setFilterItems}) {
   const token = localStorage.getItem("token");
-  const [items, setItems] = useState([]);
   const navigate = useNavigate()
   // console.log(token)
 
-  useEffect(() => {
-     try {
-      const res = api.get("/roadmap")
-     .then((res) => 
-     {
-      setItems(res.data.data)
-     }
-  );
-     } catch (error) {
-      console.log(error)
-     }
-  }, []);
 
 const handleUpvote = async (id) => {
   try {
@@ -33,7 +19,7 @@ const handleUpvote = async (id) => {
 
     if (res?.data?.message) {
       toast.success(res.data.message);
-      setItems((prevItems) =>
+      setFilterItems((prevItems) =>
         prevItems.map((item) =>
           item.id === id
             ? {
@@ -45,9 +31,8 @@ const handleUpvote = async (id) => {
       );
     }
   } catch (error) {
-    const message =
-      error.response?.data?.error;
-    toast.error(message);
+    console.log(error)
+    toast.error('Already Upvoted');
   }
 };
 
@@ -58,7 +43,7 @@ const handleItemDetails = (id) => {
 
   return (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {items?.map((item) => (
+  {filterItems?.map((item) => (
     <div 
       key={item?.id} 
       className="border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 bg-white"

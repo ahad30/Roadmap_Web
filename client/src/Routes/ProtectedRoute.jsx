@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 
 const ProtectedRoute = ({ children }) => {
-  const { loading , checkAuthStatus} = useAuth();
+  const { user, checkAuthStatus} = useAuth();
   const location = useLocation();
 
   const getToken = () => {    
@@ -21,20 +21,9 @@ useEffect(() => {
     };
     verifyAuth();
   }, []);
- 
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
-  if (!getToken()) {
+  if (!getToken() || !user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

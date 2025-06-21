@@ -45,7 +45,6 @@ const upVoteItem =  async (req, res) => {
   const roadmapItemId = req.params.id;
 
   const already = await prisma.upvote.findFirst({ where: { userId, roadmapItemId } });
-  console.log(already)
   if (already) return res.status(400).json({ error: "Already upvoted" });
 
   await prisma.upvote.create({ data: { userId, roadmapItemId } });

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/api";
-import CommentsSection from "../../components/CommentsSection";
-import { MessageSquare, ThumbsUp} from 'lucide-react';
+import CommentsSection from "../../components/Comment/CommentsSection";
+
 
 
 const RoadmapItemDetails = () => {

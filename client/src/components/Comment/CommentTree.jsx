@@ -1,7 +1,7 @@
-import  { useState } from "react";
-import api from "../api/api";
-import { useAuth } from "../context/AuthContext";
-import { FaReply, FaEdit, FaTrash, FaThumbsUp, FaEllipsisH } from "react-icons/fa";
+import { useState } from "react";
+import api from "../../api/api";
+import { useAuth } from "../../context/AuthContext";
+import { FaReply, FaEdit, FaTrash, FaEllipsisH } from "react-icons/fa";
 import moment from "moment";
 import { toast } from "sonner";
 
@@ -17,7 +17,7 @@ export default function CommentTree({
   const [activeReply, setActiveReply] = useState(null);
   const [activeEdit, setActiveEdit] = useState(null);
   const [replyContent, setReplyContent] = useState("");
-  const [editContent, setEditContent] = useState({});
+  const [editContent, setEditContent] = useState("");
   const [showOptions, setShowOptions] = useState({});
 
   const toggleOptions = (commentId) => {
@@ -37,13 +37,14 @@ export default function CommentTree({
   };
 
   const handleEdit = async (commentId) => {
-    if (!editContent[commentId]?.trim()) return;
+    if (editContent.trim() === "") return toast.error("Comment cannot be empty");
     await api.put(
       `/comment/${commentId}`,
-      { content: editContent[commentId] },
+      { content: editContent },
       { headers: { Authorization: `Bearer ${token}` } }
     );
     setActiveEdit(null);
+    setEditContent("");
     onCommentAdded?.();
   };
 
@@ -57,7 +58,6 @@ export default function CommentTree({
     }
   };
 
-
   return (
     <div className={`space-y-3 ${level > 0 ? '-ml-10 lg:ml-2' : ''}`}>
       {comments.map((comment) => (
@@ -69,7 +69,7 @@ export default function CommentTree({
               </div>
             </div>
             
-            <div className="lg:flex-1 w-[80%] md:w-full">
+            <div className="lg:flex-1 w-[80%] md:w-[90%]">
               <div className="bg-gray-100 rounded-2xl p-3 break-words">
                 <div className="flex items-center">
                   <span className="font-semibold text-sm mr-2">{comment.author?.name}</span>            
@@ -79,19 +79,17 @@ export default function CommentTree({
                   <div className="mt-2">
                     <textarea
                       autoFocus
-                      value={editContent[comment.id] || comment.content}
-                      onChange={(e) =>
-                        setEditContent({
-                          ...editContent,
-                          [comment.id]: e.target.value,
-                        })
-                      }
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
                       className="w-full border rounded-lg p-2 text-sm"
                       rows="2"
                     />
                     <div className="flex justify-end space-x-2 mt-2">
                       <button
-                        onClick={() => setActiveEdit(null)}
+                        onClick={() => {
+                          setActiveEdit(null);
+                          setEditContent("");
+                        }}
                         className="text-sm px-3 py-1 rounded-lg bg-gray-200 hover:bg-gray-300"
                       >
                         Cancel
@@ -110,8 +108,7 @@ export default function CommentTree({
               </div>
               
               <div className="flex items-center mt-1 text-xs text-gray-500 space-x-4 ml-2">
-               
-                {level < 3  && (
+                {level < 3 && (
                   <button 
                     onClick={() => {
                       setActiveReply(activeReply === comment.id ? null : comment.id);
@@ -123,10 +120,9 @@ export default function CommentTree({
                   </button>
                 )}
 
-                  <span className="text-gray-500 text-xs">
-                    {moment(comment.createdAt).fromNow()}
-                  </span>
-                
+                <span className="text-gray-500 text-xs">
+                  {moment(comment.createdAt).fromNow()}
+                </span>
               </div>
               
               {activeReply === comment.id && (
@@ -187,7 +183,7 @@ export default function CommentTree({
                     <button
                       onClick={() => {
                         setActiveEdit(comment.id);
-                        setEditContent(prev => ({ ...prev, [comment.id]: comment.content }));
+                        setEditContent(comment.content);
                         setShowOptions({});
                       }}
                       className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

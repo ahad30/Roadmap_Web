@@ -24,10 +24,7 @@ const getRoadmapById = async (req, res) => {
   const item = await prisma.roadmapItem.findUnique({
     where: { id: id },
     include: {
-      upvotes: true,
-      comments: {
-        include: { author: true, replies: true }
-      }
+      upvotes: true
     }
   });
   res.json({

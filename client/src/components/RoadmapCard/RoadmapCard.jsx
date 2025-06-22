@@ -98,9 +98,6 @@ const handleItemDetails = (id) => {
          </div>
 
         </div>
-
-          {/* <h4 className="mt-4 font-semibold">Comments</h4>
-          <CommentsSection roadmapItemId={item.id} /> */}
       </div>
     </div>
   ))}

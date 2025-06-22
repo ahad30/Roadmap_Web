@@ -130,7 +130,6 @@ const signin = async (req, res) => {
     // Generate token
     const token = generateToken(user.id);
     setTokenCookie(res, token );
-    console.log(user)
     res.json({
       success: true,
       message: 'Login successful',
@@ -176,39 +175,10 @@ const logout = async (req, res) => {
   }
 };
 
-const verifyToken = async (req, res) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.userId }
-    });
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name
-      }
-    });
-  } catch (error) {
-    console.error('Token verification error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-};
 
 module.exports = {
   signup,
   signin,
-  logout,
-  verifyToken
+  logout
 };

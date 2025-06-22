@@ -2,25 +2,59 @@ import { useEffect, useState } from "react";
 import api from "../../api/api";
 import AddCommentForm from "./AddCommentForm";
 import CommentTree from "./CommentTree";
+import { Loader2 } from "lucide-react"; // or any other spinner you prefer
+import { toast } from "sonner";
+import Loader from "../Loader";
 
 export default function CommentsSection({ roadmapItemId }) {
   const [comments, setComments] = useState([]);
-  // console.log(comments)
-   
+  const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem("token");
   const loadComments = () => {
-    api.get(`/roadmap/${roadmapItemId}/comments` , { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } })
-      .then(res => setComments(res.data))
-      .catch(err => console.error(err));
+    api
+      .get(`/roadmap/${roadmapItemId}/comments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setComments(res.data);
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+
   };
+
+  
 
   useEffect(() => {
     loadComments();
   }, [roadmapItemId]);
 
+ 
+
+console.log(comments)
+
   return (
     <div className="mt-4">
-      <AddCommentForm roadmapItemId={roadmapItemId} onCommentAdded={loadComments} />
-      <CommentTree comments={comments} roadmapItemId={roadmapItemId}  onCommentAdded={loadComments} />
+      <AddCommentForm
+        roadmapItemId={roadmapItemId}
+        onCommentAdded={loadComments}
+      />
+      
+      { loading ?
+        <div className="mt-4 flex justify-center items-center h-32">
+        <Loader/>
+      </div>
+      :         
+      (
+        <CommentTree
+          comments={comments}
+          roadmapItemId={roadmapItemId}
+          onCommentAdded={loadComments}
+        />
+      ) }
+   
     </div>
   );
 }

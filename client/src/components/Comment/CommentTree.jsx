@@ -12,7 +12,8 @@ export default function CommentTree({
   onCommentAdded,
 }) {
   const token = localStorage.getItem("token");
-  const { user } = useAuth();
+    const { user } = useAuth();
+
   const userId = user?.id;
   const [activeReply, setActiveReply] = useState(null);
   const [activeEdit, setActiveEdit] = useState(null);

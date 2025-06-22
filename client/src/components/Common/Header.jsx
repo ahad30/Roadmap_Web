@@ -1,18 +1,10 @@
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
-import Loader from "../Loader";
 
 const Header = () => {
-  const { user, logout, loading } = useAuth();
+  const { user, logout } = useAuth();
   const token = localStorage.getItem("token");
 
-  if (loading) {
-    return (
-      <div className="animate-pulse">
-        <div className="w-full h-[50px] bg-[#e5eaf2]"></div>
-      </div>
-    );
-  }
   return (
     <div className="bg-green-500 py-2 lg:py-3 text-white">
       <div className="px-2 max-w-6xl mx-auto flex justify-between items-center">

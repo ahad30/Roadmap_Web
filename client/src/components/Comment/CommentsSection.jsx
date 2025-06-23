@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import api from "../../api/api";
 import AddCommentForm from "./AddCommentForm";
 import CommentTree from "./CommentTree";
-import { Loader2 } from "lucide-react"; // or any other spinner you prefer
-import { toast } from "sonner";
 import Loader from "../Loader";
 
 export default function CommentsSection({ roadmapItemId }) {

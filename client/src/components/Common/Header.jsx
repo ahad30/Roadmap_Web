@@ -28,12 +28,16 @@ const Header = () => {
             </>
           ) : (
             <>
-              <button className="bg-black text-white rounded-md py-1 px-4 flex items-center gap-[10px] text-[1rem] uppercase">
+             <Link to={"/login"}>
+               <button className="bg-black text-white rounded-md py-1 px-4 flex items-center gap-[10px] text-[1rem] uppercase">
                 Login
               </button>
-              <button className="bg-blue-500 text-white rounded-md py-1 px-4 flex items-center gap-[10px] text-[1rem] uppercase">
-                Register
-              </button>
+             </Link>
+              <Link to={"/register"}>
+                <button className="bg-blue-500 text-white rounded-md py-1 px-4 flex items-center gap-[10px] text-[1rem] uppercase">
+                  Register
+                </button>
+              </Link>
             </>
           )}
         </div>

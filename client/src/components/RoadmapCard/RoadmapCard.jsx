@@ -14,6 +14,7 @@ const handleUpvote = async (id) => {
   try {
     const res = await api.post(
       `/roadmap/${id}/upvote`,
+      {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
 

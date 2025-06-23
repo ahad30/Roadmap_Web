@@ -12,8 +12,8 @@ router.post('/signin', signinValidation, signin);
 router.post('/logout', logout);
 
 // Roadmap
-router.get('/roadmap', authMiddleware, getRoadmap);
-router.get('/roadmap/:id',authMiddleware, getRoadmapById);
+router.get('/roadmap', getRoadmap);
+router.get('/roadmap/:id', getRoadmapById);
 router.post('/roadmap/:id/upvote', authMiddleware, upVoteItem);
 
 

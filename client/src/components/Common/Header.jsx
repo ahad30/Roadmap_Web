@@ -14,7 +14,7 @@ const Header = () => {
           </Link>
         </div>
         <div className="flex gap-2 items-center">
-          {user || token ? (
+          {user && token ? (
             <>
               <span className="hidden sm:inline font-bold">{user?.name}</span>
               <Link to={"/login"}>

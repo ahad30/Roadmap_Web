@@ -19,4 +19,15 @@ I used camelCase for variables and PascalCase for components. The code is organi
 
 In summary, I emphasized clean code, straightforward interactions, and choices that promote scalability while avoiding unnecessary complexity.
 
+Create a `.env` file in the backend directory:
+
+```env
+DATABASE_URL="mongodb+srv://username:password@cluster0.qxclpw1.mongodb.net/databasename?retryWrites=true&w=majority"
+JWT_SECRET=your_Token_secret_key
+JWT_EXPIRES_IN="30m"(optinal)
+PORT=5000
+```
+
+Create a `.env` file in the Frontend directory:
+VITE_BACKEND_URL=http://localhost:5000/api/v1
 

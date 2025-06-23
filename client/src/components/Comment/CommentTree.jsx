@@ -4,29 +4,34 @@ import { useAuth } from "../../context/AuthContext";
 import { FaReply, FaEdit, FaTrash, FaEllipsisH } from "react-icons/fa";
 import moment from "moment";
 import { toast } from "sonner";
+import DeleteModal from "../Modal/DeleteModal";
 
 export default function CommentTree({
   comments,
   roadmapItemId,
   level = 0,
+  setComments,
   onCommentAdded,
 }) {
   const token = localStorage.getItem("token");
-    const { user } = useAuth();
-
+  const { user, loading, setLoading } = useAuth();
   const userId = user?.id;
   const [activeReply, setActiveReply] = useState(null);
   const [activeEdit, setActiveEdit] = useState(null);
   const [replyContent, setReplyContent] = useState("");
   const [editContent, setEditContent] = useState("");
   const [showOptions, setShowOptions] = useState({});
+  const [showModal, setShowModal] = useState(false);
 
   const toggleOptions = (commentId) => {
-    setShowOptions(prev => ({ ...prev, [commentId]: !prev[commentId] }));
+    setShowOptions((prev) => ({
+       [commentId]: !prev[commentId]
+      }));
   };
 
   const handleReply = async (parentId) => {
-    if (!replyContent.trim()) return toast.error('Fill the input first');
+    if (!replyContent.trim()) return toast.error("Fill the input first");
+    setLoading(true);
     await api.post(
       `/roadmap/${roadmapItemId}/comment`,
       { content: replyContent, parentId },
@@ -34,11 +39,16 @@ export default function CommentTree({
     );
     setReplyContent("");
     setActiveReply(null);
-    onCommentAdded?.();
+    onCommentAdded();
+    toast.success("Reply Added Successfully");
+    setLoading(false);
   };
 
   const handleEdit = async (commentId) => {
-    if (editContent.trim() === "") return toast.error("Comment cannot be empty");
+    if (editContent.trim() === "")
+      return toast.error("Comment cannot be empty");
+    setLoading(true);
+
     await api.put(
       `/comment/${commentId}`,
       { content: editContent },
@@ -46,21 +56,34 @@ export default function CommentTree({
     );
     setActiveEdit(null);
     setEditContent("");
-    onCommentAdded?.();
+    onCommentAdded();
+
+    setComments((prev) =>
+      prev.map((comment) =>
+        comment.id === commentId ? { ...comment, content: editContent } : comment
+      )
+    );
+    toast.success("Comment Updated Successfully");
+    setLoading(false);
   };
 
   const handleDelete = async (commentId) => {
-    if (window.confirm("Are you sure you want to delete this comment?")) {
+      setLoading(true);
       await api.delete(`/comment/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      onCommentAdded?.();
-      toast.success('Comment Deleted Successfully');
-    }
+    onCommentAdded();
+
+      setComments((prev) =>
+        prev.filter((comment) => comment.id !== commentId)
+      );
+      toast.success("Comment Deleted Successfully");
+      setShowModal(false);  
+      setLoading(false);
   };
 
   return (
-    <div className={`space-y-3 ${level > 0 ? '-ml-10 lg:ml-2' : ''}`}>
+    <div className={`space-y-3 ${level > 0 ? "-ml-10 lg:ml-2" : ""}`}>
       {comments.map((comment) => (
         <div key={comment.id} className="bg-white p-3">
           <div className="flex items-start">
@@ -69,13 +92,15 @@ export default function CommentTree({
                 {comment.author?.name?.charAt(0).toUpperCase()}
               </div>
             </div>
-            
+
             <div className="lg:flex-1 w-[80%] md:w-[90%]">
               <div className="bg-gray-100 rounded-2xl p-3 break-words">
                 <div className="flex items-center">
-                  <span className="font-semibold text-sm mr-2">{comment.author?.name}</span>            
+                  <span className="font-semibold text-sm mr-2">
+                    {comment.author?.name}
+                  </span>
                 </div>
-                
+
                 {activeEdit === comment.id ? (
                   <div className="mt-2">
                     <textarea
@@ -99,7 +124,7 @@ export default function CommentTree({
                         onClick={() => handleEdit(comment.id)}
                         className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
                       >
-                        Update
+                        {loading ? "Updatig" : "Update"}
                       </button>
                     </div>
                   </div>
@@ -107,12 +132,14 @@ export default function CommentTree({
                   <p className="text-sm mt-1 break-words">{comment?.content}</p>
                 )}
               </div>
-              
+
               <div className="flex items-center mt-1 text-xs text-gray-500 space-x-4 ml-2">
                 {level < 3 && (
-                  <button 
+                  <button
                     onClick={() => {
-                      setActiveReply(activeReply === comment.id ? null : comment.id);
+                      setActiveReply(
+                        activeReply === comment.id ? null : comment.id
+                      );
                       setActiveEdit(null);
                     }}
                     className="flex items-center hover:text-blue-500"
@@ -125,7 +152,7 @@ export default function CommentTree({
                   {moment(comment.createdAt).fromNow()}
                 </span>
               </div>
-              
+
               {activeReply === comment.id && (
                 <div className="mt-3 flex">
                   <div className="flex-shrink-0 mr-2">
@@ -153,32 +180,33 @@ export default function CommentTree({
                         onClick={() => handleReply(comment.id)}
                         className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
                       >
-                        Reply
+                        {loading ? "Replying" : "Reply"}
                       </button>
                     </div>
                   </div>
                 </div>
               )}
-              
+
               {comment.replies?.length > 0 && (
                 <CommentTree
                   comments={comment.replies}
                   roadmapItemId={roadmapItemId}
                   level={level + 1}
                   onCommentAdded={onCommentAdded}
+                  setComments={setComments}
                 />
               )}
             </div>
-            
+
             {userId === comment.authorId && (
               <div className="relative">
-                <button 
+                <button
                   onClick={() => toggleOptions(comment.id)}
                   className="text-gray-400 hover:text-gray-600 p-1"
                 >
                   <FaEllipsisH />
                 </button>
-                
+
                 {showOptions[comment.id] && (
                   <div className="absolute right-0 mt-1 w-40 bg-white rounded-md shadow-lg z-10 border">
                     <button
@@ -191,20 +219,24 @@ export default function CommentTree({
                     >
                       <FaEdit className="mr-2" /> Edit
                     </button>
+
                     <button
-                      onClick={() => {
-                        handleDelete(comment.id);
-                        setShowOptions({});
-                      }}
-                      className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                    >
-                      <FaTrash className="mr-2" /> Delete
-                    </button>
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                          onClick={() => setShowModal(!showModal)}
+                        >
+                          <FaTrash className="mr-2" /> Delete
+                        </button>
+
                   </div>
                 )}
               </div>
             )}
           </div>
+                           { showModal &&
+                   <DeleteModal showModal={showModal} setShowModal ={setShowModal} 
+                  comment={comment} handleDelete={handleDelete} loading={loading}
+                  />
+                 }
         </div>
       ))}
     </div>

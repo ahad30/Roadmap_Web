@@ -13,15 +13,14 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user , setUser] = useState(null)
-  console.log(user)
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   
  useEffect(() => {
   const storedUser = localStorage.getItem('user');
   if (storedUser) {  
       setUser(JSON.parse(storedUser));
   }
-  setLoading(false);
+  // setLoading(false);
 }, []);
 
   const clearToken = () => {
@@ -90,6 +89,7 @@ const signin = async (credentials) => {
   const value = {
     user,
     loading,
+    setLoading,
     signup,
     signin,
     logout,

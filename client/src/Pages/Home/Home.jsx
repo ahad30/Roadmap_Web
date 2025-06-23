@@ -8,7 +8,6 @@ const Home = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [sorting , setSorting] = useState("")
-  console.log(items)
   useEffect(() => {
     const fetchRoadmaps = async () => {
       try {

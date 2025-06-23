@@ -33,8 +33,6 @@ export default function CommentsSection({ roadmapItemId }) {
 
  
 
-console.log(comments)
-
   return (
     <div className="mt-4">
       <AddCommentForm
@@ -52,6 +50,7 @@ console.log(comments)
           comments={comments}
           roadmapItemId={roadmapItemId}
           onCommentAdded={loadComments}
+          setComments={setComments}
         />
       ) }
    

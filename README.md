@@ -9,6 +9,9 @@ Architecture Choices
 
 I choose React on the frontend due to its component-based architecture, which facilitated the  features such as filters, comment trees, and roadmap cards into manageable modules. On the backend, Express with Prisma (MongoDB) provided the flexibility and a  ORM interface necessary for handling nested data.
 
+JWT authentication was implemented to secure the API, ensuring that only authenticated users can interact with the roadmap, comments, and upvotes. This choice was made to protect user data and maintain the integrity of interactions.
+
+
 Selecting Prisma over traditional Mongo queries contributed to better maintainability and reduced the likelihood of errors, especially when managing relationships among users, comments, and upvotes.
 
 

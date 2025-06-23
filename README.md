@@ -24,10 +24,13 @@ Create a `.env` file in the backend directory:
 ```env
 DATABASE_URL="mongodb+srv://username:password@cluster0.qxclpw1.mongodb.net/databasename?retryWrites=true&w=majority"
 JWT_SECRET=your_Token_secret_key
-JWT_EXPIRES_IN="30m"(optinal)
+JWT_EXPIRES_IN="7d"
 PORT=5000
 ```
 
 Create a `.env` file in the Frontend directory:
+```env
 VITE_BACKEND_URL=http://localhost:5000/api/v1
+```
+
 

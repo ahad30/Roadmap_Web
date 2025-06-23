@@ -48,8 +48,9 @@ export default function AddCommentForm({ roadmapItemId, onCommentAdded }) {
       />
       <div className='flex justify-end'>
         <button
+        disabled={loading}
         type="submit"
-        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+        className="mt-2 bg-blue-500 text-white px-4 py-2 rounded disabled:cursor-not-allowed disabled:opacity-50"
       >
        {loading?  "Posting Comment" : "Post Comment"}
       </button>

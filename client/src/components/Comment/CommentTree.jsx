@@ -121,10 +121,11 @@ export default function CommentTree({
                         Cancel
                       </button>
                       <button
+                        disabled={loading}
                         onClick={() => handleEdit(comment.id)}
-                        className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                        className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {loading ? "Updatig" : "Update"}
+                        {loading ? "Updating" : "Update"}
                       </button>
                     </div>
                   </div>
@@ -177,8 +178,9 @@ export default function CommentTree({
                         Cancel
                       </button>
                       <button
+                        disabled={loading}
                         onClick={() => handleReply(comment.id)}
-                        className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                        className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {loading ? "Replying" : "Reply"}
                       </button>
@@ -219,8 +221,7 @@ export default function CommentTree({
                     >
                       <FaEdit className="mr-2" /> Edit
                     </button>
-
-                    <button
+                      <button
                           className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                           onClick={() => setShowModal(!showModal)}
                         >
@@ -232,7 +233,7 @@ export default function CommentTree({
               </div>
             )}
           </div>
-                           { showModal &&
+                 { showModal &&
                    <DeleteModal showModal={showModal} setShowModal ={setShowModal} 
                   comment={comment} handleDelete={handleDelete} loading={loading}
                   />
